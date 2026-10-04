@@ -70,4 +70,6 @@ app.get('/api/admin/stats',auth,admin,(req,res)=>{const sales=db.prepare("SELECT
 // Payment adapter placeholder: never mark a payment as paid from the browser. Connect a verified provider webhook here.
 app.post('/api/payments/create',auth,(req,res)=>res.status(501).json({error:'Payment gateway not connected yet. This endpoint is reserved for the verified Ghana payment provider integration.'}));
 app.get('*',(req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
-app.listen(PORT,()=>console.log(`PrimeBite V2 running on http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`PrimeBite V2 running on port ${PORT}`);
+});
