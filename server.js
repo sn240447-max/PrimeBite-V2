@@ -37,6 +37,7 @@ if (!db.prepare('SELECT id FROM users WHERE email=?').get(adminEmail)) {
 }
 
 app.use(cors()); app.use(express.json()); app.use(express.static(path.join(__dirname,'public')));
+app.get('/healthz',(req,res)=>res.json({ok:true}));
 function tokenFor(user){ return jwt.sign({id:user.id,role:user.role,email:user.email},JWT_SECRET,{expiresIn:'7d'}); }
 function auth(req,res,next){ const h=req.headers.authorization||''; try { req.user=jwt.verify(h.replace('Bearer ',''),JWT_SECRET); next(); } catch { res.status(401).json({error:'Authentication required'}); } }
 function admin(req,res,next){ if(req.user?.role!=='admin') return res.status(403).json({error:'Admin access required'}); next(); }
