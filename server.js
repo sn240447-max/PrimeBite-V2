@@ -32,6 +32,15 @@ if (!seed) {
 }
 const adminEmail = process.env.ADMIN_EMAIL || 'admin@primebite.local';
 const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMe123!';
+const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get(adminEmail);
+
+if (existingAdmin) {
+  db.prepare('UPDATE users SET password_hash = ?, role = ? WHERE email = ?')
+    .run(bcrypt.hashSync(adminPassword, 10), 'admin', adminEmail);
+} else {
+  db.prepare('INSERT INTO users(name,email,password_hash,role) VALUES(?,?,?,?)')
+    .run('PrimeBite Admin', adminEmail, bcrypt.hashSync(adminPassword, 10), 'admin');
+}
 if (!db.prepare('SELECT id FROM users WHERE email=?').get(adminEmail)) {
   db.prepare('INSERT INTO users(name,email,password_hash,role) VALUES(?,?,?,?)').run('PrimeBite Admin',adminEmail,bcrypt.hashSync(adminPassword,10),'admin');
 }
